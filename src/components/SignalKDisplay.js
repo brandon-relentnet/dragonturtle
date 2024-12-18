@@ -54,7 +54,6 @@ function SignalKDisplay() {
             >
                 Refresh Data
             </button>
-            {console.log(data)}
             <pre>{JSON.stringify(data, null, 2)}</pre>
         </div>
     );
