@@ -7,7 +7,7 @@ const SERVER_HOSTNAME = process.env.NEXT_PUBLIC_SK_SERVER_HOSTNAME || 'demo.sign
 const SERVER_PORT = process.env.NEXT_PUBLIC_SK_SERVER_PORT || 443;
 
 export default function SignalKDashboard() {
-    const [cpuData, setCpuData] = useState({});
+    const [groupedData, setGroupedData] = useState({});
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -33,7 +33,7 @@ export default function SignalKDashboard() {
                 {
                     context: 'vessels.self',
                     subscribe: [
-                        { path: 'environment.rpi.cpu' },
+                        { path: '' },
                     ],
                 },
             ]);
@@ -42,16 +42,23 @@ export default function SignalKDashboard() {
         // Handle incoming delta updates
         client.on('delta', (delta) => {
             console.log('Delta Update Received:', delta);
-            
-            setCpuData((prevCpuData) => {
-                const updatedData = { ...prevCpuData };
+
+            setGroupedData((prevData) => {
+                const updatedData = { ...prevData };
 
                 delta.updates?.forEach((update) => {
                     update.values?.forEach((value) => {
                         const fullPath = value.path;
-                        updatedData[fullPath] = value.value;
-                    });    
-            });
+                        const [section, ...rest] = fullPath.split('.');
+                        const key = rest.join('.');
+
+                        if (!updatedData[section]) {
+                            updatedData[section] = {};
+                        }
+
+                        updatedData[section][key] = value.value;
+                    });
+                });
 
                 return updatedData;
             });
@@ -70,21 +77,25 @@ export default function SignalKDashboard() {
 
     return (
         <div className='p-4'>
-            <h1>SignalK Real-Time CPU Dashboard</h1>
+            <h1>SignalK Real-Time Dashboard</h1>
             {error && <p className='text-red-500'>Error: {error}</p>}
-            
+
             <div className='mt-4'>
-                <h2>CPU Data</h2>
-                {Object.keys(cpuData).length > 0 ? (
-                    <ul>
-                        {Object.entries(cpuData).map(([path, value]) => (
-                            <li key={path}>
-                                <strong>{path}:</strong> {typeof value === 'number' ? value : JSON.stringify(value)}
-                            </li>
-                        ))}
-                    </ul>
+                {Object.keys(groupedData).length > 0 ? (
+                    Object.entries(groupedData).map(([section, data]) => (
+                        <div key={section} className='mb-4'>
+                            <h2 className='text-2xl font-semibold mb-2'>{section}</h2>
+                            <ul className='list-disc ml-4'>
+                                {Object.entries(data).map(([key, value]) => (
+                                    <li key={key}>
+                                        <strong>{key}:</strong> {typeof value === 'number' ? value : JSON.stringify(value)}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))
                 ) : (
-                    <p>Waiting for CPU data...</p>
+                    <p>Waiting for data...</p>
                 )}
             </div>
         </div>
