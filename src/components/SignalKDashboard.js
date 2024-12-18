@@ -15,13 +15,20 @@ export default function SignalKDashboard() {
     const handleCheckboxChange = (section, key) => {
         setSelectedData((prev) => {
             const updated = { ...prev };
-            if (!updated[section]) updated[section] = new Set();
 
-            if (updated[section].has(key)) {
-                updated[section].delete(key); // Deselect
-                if (updated[section].size === 0) delete updated[section];
+            // Clone the Set if it exists, or create a new Set
+            const sectionSet = new Set(updated[section] || []);
+
+            if (sectionSet.has(key)) {
+                sectionSet.delete(key); // Unselect the key
+                if (sectionSet.size === 0) {
+                    delete updated[section]; // Remove empty sections
+                } else {
+                    updated[section] = sectionSet; // Update section with cloned Set
+                }
             } else {
-                updated[section].add(key); // Select
+                sectionSet.add(key); // Add new key
+                updated[section] = sectionSet; // Update section with cloned Set
             }
 
             return updated;
