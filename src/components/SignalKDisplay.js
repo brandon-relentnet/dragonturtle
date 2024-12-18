@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
-const sk_api = process.env.NEXT_PUBLIC_SK_API;
+const sk_api = process.env.NEXT_PUBLIC_SK_API || "https://demo.signalk.org/signalk/v1/api/vessels";
 
 function SignalKDisplay() {
     const [data, setData] = useState(null);
@@ -52,13 +52,9 @@ function SignalKDisplay() {
                 onClick={generate}
                 className='p-4 bg-indigo-500 text-white rounded-lg shadow-lg hover:bg-indigo-600 hover:scale-105 active:scale-95 transition-transform duration-300'
             >
-                New Image
+                Refresh Data
             </button>
-            <Image src={data.message}
-                alt="Signal K"
-                width={500}
-                height={500}
-            />
+            {console.log(data)}
             <pre>{JSON.stringify(data, null, 2)}</pre>
         </div>
     );
