@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import Image from 'next/image';
 
-const sk_api = process.env.NEXT_PUBLIC_SK_API || "https://demo.signalk.org/signalk/v1/api/vessels";
+const sk_api = process.env.NEXT_PUBLIC_SK_SERVER_HOSTNAME || 'https://demo.signalk.org/signalk/v1/api/vessels/self';
 
 function SignalKDisplay() {
     const [data, setData] = useState(null);
@@ -54,6 +53,11 @@ function SignalKDisplay() {
             >
                 Refresh Data
             </button>
+            <h2>Data</h2>
+            <p>Server: {sk_api}</p>
+            <p>Signal K data:</p>
+            <p>{data.environment.rpi}</p>
+
             <pre>{JSON.stringify(data, null, 2)}</pre>
         </div>
     );
