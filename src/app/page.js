@@ -1,10 +1,10 @@
-import SignalKDisplay from "@/components/SignalKDisplay";
+import SignalKDashboard from "@/components/SignalKDashboard";
 
 function Home() {
     return (
         <div>
             <h1>Home</h1>
-            <SignalKDisplay />
+            <SignalKDashboard />
         </div>
     );
 }
