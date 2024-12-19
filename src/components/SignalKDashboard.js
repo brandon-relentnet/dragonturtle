@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useSignalK } from './SignalKContext';
+import Section from './Section';
 
 export default function SignalKDashboard() {
     const { groupedData, error } = useSignalK();
@@ -56,34 +57,14 @@ export default function SignalKDashboard() {
             <div className='mt-4'>
                 {Object.keys(groupedData).length > 0 ? (
                     Object.entries(groupedData).map(([section, data]) => (
-                        <div key={section} className='mb-4'>
-                            <h2 className='text-2xl font-semibold mb-2'>{section.toUpperCase()}</h2>
-                            <ul className='list-disc ml-4'>
-                                {Object.entries(data).map(([key, value]) => {
-                                    // Only show selected data points if not in edit mode
-                                    if (!editMode && !isSelected(section, key)) return null;
-
-                                    return (
-                                        <li key={key} className='flex items-center'>
-                                            {editMode && (
-                                                <input
-                                                    type='checkbox'
-                                                    checked={isSelected(section, key)}
-                                                    onChange={() =>
-                                                        handleCheckboxChange(section, key)
-                                                    }
-                                                    className='mr-2'
-                                                />
-                                            )}
-                                            <strong>{key}:</strong>{' '}
-                                            {typeof value === 'number'
-                                                ? value
-                                                : JSON.stringify(value)}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        </div>
+                        <Section
+                            key={section}
+                            sectionName={section}
+                            data={data}
+                            editMode={editMode}
+                            isSelected={isSelected}
+                            onCheckboxChange={handleCheckboxChange}
+                        />
                     ))
                 ) : (
                     <p>Waiting for data...</p>
